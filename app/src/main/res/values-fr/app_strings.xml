@@ -47,7 +47,7 @@
     <string name="widget_togglelock">(Dé)Verrouillage</string>
     <string name="widget_toggleclimate">(Dés)Activer climat</string>
 
-    <string name="widget_lastupdated">Mis à jour</string>
+    <string name="widget_lastupdated">Mise à jour</string>
     <string name="widget_updated_never">Jamais</string>
     <string name="widget_updated_today">à %1$s</string>
     <string name="widget_updated_yesterday">Hier à %1$s</string>

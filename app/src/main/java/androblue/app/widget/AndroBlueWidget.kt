@@ -51,7 +51,12 @@ class AndroBlueWidget : AppWidgetProvider() {
                 setTextViewText(R.id.widget_charge, vehicleRepository.currentChargeStatus())
                 setTextViewText(R.id.widget_lockstatus, vehicleRepository.currentLockStatus())
                 setTextViewText(R.id.widget_climatstatus, vehicleRepository.currentClimateStatus())
+                setTextViewText(R.id.widget_lastupdated, context.getText(R.string.widget_lastupdated))
                 setTextViewText(R.id.widget_lastupdatedate, lastRefreshTime())
+
+                setTextViewText(R.id.widget_togglelock, context.getText(R.string.widget_togglelock))
+                setTextViewText(R.id.widget_toggleclimate, context.getText(R.string.widget_toggleclimate))
+
                 bindButton(context, TOGGLE_LOCK.name, R.id.widget_togglelock)
                 bindButton(context, TOGGLE_CLIMATE.name, R.id.widget_toggleclimate)
             }
