@@ -101,3 +101,4 @@ TODO.md
 /app/google-services.json
 /commonlib/build/
 /app/build/
+/app/src/debug/assets/developer.properties
