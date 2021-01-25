@@ -24,6 +24,7 @@
     <string name="advanced_license">Licences</string>
     <string name="advanced_sharelogs">Partager les logs</string>
     <string name="advanced_crash">Forcer un crash</string>
+    <string name="advance_github">AndroBlue sur GitHub</string>
 
     <string name="login_invalidlogin">Courriel, mot de passe ou PIN invalide</string>
 

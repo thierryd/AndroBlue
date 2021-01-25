@@ -29,7 +29,8 @@
                 android:src="@drawable/logo"
                 app:layout_constraintBottom_toBottomOf="@id/home_title"
                 app:layout_constraintStart_toEndOf="@id/home_title"
-                app:layout_constraintTop_toTopOf="@id/home_title" />
+                app:layout_constraintTop_toTopOf="@id/home_title"
+                tools:ignore="ContentDescription" />
 
         <TextView
                 android:id="@+id/home_statuslabel"
@@ -175,24 +176,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/home_loggedInAs" />
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_advanced"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="64dp"
-                android:text="@string/home_advanced"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/home_logout" />
-
         <TextView
                 android:id="@+id/home_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="64dp"
+                app:layout_constraintEnd_toStartOf="@id/home_advanced"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/home_advanced"
+                app:layout_constraintTop_toBottomOf="@id/home_logout"
                 tools:text="home_version" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_advanced"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.5"
+                android:text="@string/home_advanced"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/home_version"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/home_version" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
