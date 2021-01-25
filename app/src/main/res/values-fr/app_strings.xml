@@ -1,0 +1,79 @@
+<resources>
+    <string name="login_desc">AndroBlue est une application utilisée pour envoyer des commandes à une Ioniq EV 2020 au Canada\nSVP, saisissez vos accès BlueLink dans les champs ci-bas</string>
+    <string name="login_email">Courriel</string>
+    <string name="login_password">Mot de passe</string>
+    <string name="login_pin">PIN</string>
+    <string name="login_go">Connexion</string>
+
+    <string name="notification_stop">Arrêter</string>
+
+    <string name="home_logout">Déconnexion</string>
+    <string name="home_status">État du véhicule</string>
+    <string name="home_refresh">Rafraîchir</string>
+    <string name="home_advanced">Avancé</string>
+    <string name="home_climateoff">Désactivation du climat</string>
+    <string name="home_climateon">Activation du climat</string>
+    <string name="home_lock">Verrouiller</string>
+    <string name="home_unlock">Déverrouiller</string>
+    <string name="home_locklabel">Verrouiller:</string>
+    <string name="home_climatelabel">Climat:</string>
+    <string name="home_actionlabel">Actions</string>
+    <string name="home_batterylabel">Charge:</string>
+    <string name="home_accountlabel">Compte</string>
+    <string name="advanced_title">Avancé</string>
+    <string name="advanced_license">Licences</string>
+    <string name="advanced_sharelogs">Partager les logs</string>
+    <string name="advanced_crash">Forcer un crash</string>
+
+    <string name="login_invalidlogin">Courriel, mot de passe ou PIN invalide</string>
+
+    <string name="home_loggininas">Connecté avec: %1$s</string>
+    <string name="home_lockstatus">Verrouillage: %1$s</string>
+    <string name="home_climatestatus">Climat: %1$s</string>
+    <string name="home_currentcharge">Charge: %1$d</string>
+
+    <string name="updating_widget">AndroidBlue démarre…</string>
+    <string name="widget_statusunknown">Inconnu</string>
+    <string name="widget_statusloading">Chargement</string>
+
+    <string name="widget_chargestatus">Charge\n%1$d\%%</string>
+
+    <string name="widget_lockstatuson">Verouillé</string>
+    <string name="widget_lockstatusoff">Déverouillé</string>
+    <string name="widget_climatestatuson">Climat ON</string>
+    <string name="widget_climatestatusoff">Climat OFF</string>
+
+    <string name="widget_togglelock">(Dé)Verrouillage</string>
+    <string name="widget_toggleclimate">(Dés)Activer climat</string>
+
+    <string name="widget_lastupdated">Mis à jour</string>
+    <string name="widget_updated_never">Jamais</string>
+    <string name="widget_updated_today">à %1$s</string>
+    <string name="widget_updated_yesterday">Hier à %1$s</string>
+
+    <string name="notif_login_error">Erreur de connexion</string>
+    <string name="notif_locking_door">Verrouillage des portes</string>
+    <string name="notif_unlockingdoor_door">Dévérouillage des portes</string>
+    <string name="notif_error_climatecannotbeturnon_doorunlocked">Erreur: impossible d’activer le climat si les portes sont déverouillées</string>
+    <string name="notif_lockdoor_success">Commande de verrouillage envoyée</string>
+    <string name="notif_lockdoor_failure">Erreur: impossible d’envoyer la commande de verrouillage</string>
+    <string name="notif_unlockdoor_success">Commande de déverrouillage envoyée</string>
+    <string name="notif_unlockdoor_failure">Erreur: impossible d’envoyer la commande de déverrouillage</string>
+    <string name="notif_climateon">Activation du climat</string>
+    <string name="notif_climateoff">Désactivation du climat</string>
+    <string name="notif_climateon_success">Commande d’activation du climat envoyée</string>
+    <string name="notif_climateon_failure">Erreur: impossible d’envoyer la commande pour activer le climat</string>
+    <string name="notif_climateoff_success">Commande d’activation du climat envoyée</string>
+    <string name="notif_climateoff_failure">Erreur: impossible d’envoyer la commande pour désactiver le climat</string>
+
+    <string name="admin_general_shareLogs">Partager les logs</string>
+    <string name="admin_general_shareLogSubject">Logs</string>
+    <string name="admin_general_shareLogText">Voir les fichiers joins</string>
+    <string name="admin_general_shareLogsCancel">Annuler</string>
+    <string name="admin_general_shareVia">Partager via</string>
+    <plurals name="admin_general_loading">
+        <item quantity="one">Chargement… (%1$d log)</item>
+        <item quantity="other">Chargement… (%1$d logs)</item>
+    </plurals>
+
+</resources>

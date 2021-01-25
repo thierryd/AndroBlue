@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name" translatable="false">AndroBlue</string>
+    <string name="login_desc">AndroBlue is an application used to send command to the Hyundai Ioniq EV 2020 from Canada.\nPlease enter your BlueLink credentials below.</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_pin">PIN</string>
+    <string name="login_go">Login</string>
+
+    <string name="notification_stop">Stop</string>
+
+    <string name="home_logout">Logout</string>
+    <string name="home_status">Vehicle Status</string>
+    <string name="home_refresh">Refresh</string>
+    <string name="home_advanced">Advanced</string>
+    <string name="home_climateoff">Climate OFF</string>
+    <string name="home_climateon">Climate ON</string>
+    <string name="home_lock">Lock</string>
+    <string name="home_unlock">Unlock</string>
+    <string name="home_locklabel">Locked:</string>
+    <string name="home_climatelabel">Climate:</string>
+    <string name="home_actionlabel">Action</string>
+    <string name="home_batterylabel">Battery:</string>
+    <string name="home_accountlabel">Account</string>
+    <string name="advanced_title">Advanced</string>
+    <string name="advanced_license">Licenses</string>
+    <string name="advanced_sharelogs">Share logs</string>
+    <string name="advanced_crash">Force a crash</string>
+
+    <string name="login_invalidlogin">Invalid login or PIN</string>
+
+    <string name="home_loggininas">Logged in as: %1$s</string>
+    <string name="home_lockstatus">Lock status: %1$s</string>
+    <string name="home_climatestatus">Climate status: %1$s</string>
+    <string name="home_currentcharge">Current charge: %1$d</string>
+
+    <string name="updating_widget">AndroBlue is running…</string>
+    <string name="widget_statusunknown">Unknown</string>
+    <string name="widget_statusloading">Loading</string>
+
+    <string name="widget_chargestatus">Charge\n%1$d\%%</string>
+
+    <string name="widget_lockstatuson">Locked</string>
+    <string name="widget_lockstatusoff">Unlocked</string>
+    <string name="widget_climatestatuson">Climate ON</string>
+    <string name="widget_climatestatusoff">Climate OFF</string>
+
+    <string name="widget_togglelock">Toggle Lock</string>
+    <string name="widget_toggleclimate">Toggle Climate</string>
+
+    <string name="widget_lastupdated">Last updated</string>
+    <string name="widget_updated_never">Never</string>
+    <string name="widget_updated_today">Today at %1$s</string>
+    <string name="widget_updated_yesterday">Yesterday at %1$s</string>
+
+    <string name="notif_login_error">Error: could not login</string>
+    <string name="notif_locking_door">Locking doors</string>
+    <string name="notif_unlockingdoor_door">Unlocking doors</string>
+    <string name="notif_error_climatecannotbeturnon_doorunlocked">Error: cannot turn Climate ON if the doors are unlocked</string>
+    <string name="notif_lockdoor_success">Locking door command sent</string>
+    <string name="notif_lockdoor_failure">Error: could not send locking door command</string>
+    <string name="notif_unlockdoor_success">Unlocking door command sent</string>
+    <string name="notif_unlockdoor_failure">Error: could not send unlocking door command</string>
+    <string name="notif_climateon">Turning Climate ON</string>
+    <string name="notif_climateoff">Turning Climate OFF</string>
+    <string name="notif_climateon_success">Climate ON command sent</string>
+    <string name="notif_climateon_failure">Error: could not send Climate ON command</string>
+    <string name="notif_climateoff_success">Climate OFF command sent</string>
+    <string name="notif_climateoff_failure">Error: could not send Climate OFF command</string>
+
+    <string name="admin_general_shareLogs">Share Logs</string>
+    <string name="admin_general_shareLogSubject">Debug logs</string>
+    <string name="admin_general_shareLogText">See attached files</string>
+    <string name="admin_general_shareLogsCancel">Cancel</string>
+    <string name="admin_general_shareVia">Share via</string>
+    <plurals name="admin_general_loading">
+        <item quantity="one">Loading… (%1$d log)</item>
+        <item quantity="other">Loading… (%1$d logs)</item>
+    </plurals>
+
+</resources>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="#E6FFFFFF"
+        android:orientation="vertical"
+        tools:ignore="NestedWeights">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+        <TextView
+                android:id="@+id/widget_charge"
+                style="@style/WidgetLabel"
+                android:text="@string/widget_statusloading"
+                tools:text="Charge: 25%" />
+
+        <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:background="@color/black" />
+
+        <TextView
+                android:id="@+id/widget_lockstatus"
+                style="@style/WidgetLabel"
+                android:text="@string/widget_statusloading" />
+
+        <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:background="@color/black" />
+
+        <TextView
+                android:id="@+id/widget_climatstatus"
+                style="@style/WidgetLabel"
+                android:text="@string/widget_statusloading" />
+
+        <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:background="@color/black" />
+
+        <LinearLayout
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/widget_lastupdated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/widget_lastupdated"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+            <TextView
+                    android:id="@+id/widget_lastupdatedate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    tools:text="Today" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:background="@color/black" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+        <TextView
+                android:id="@+id/widget_togglelock"
+                style="@style/WidgetButton"
+                android:text="@string/widget_togglelock" />
+
+        <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:background="@color/black" />
+
+        <TextView
+                android:id="@+id/widget_toggleclimate"
+                style="@style/WidgetButton"
+                android:text="@string/widget_toggleclimate" />
+
+    </LinearLayout>
+
+</LinearLayout>
