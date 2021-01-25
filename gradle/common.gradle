@@ -28,7 +28,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                        "room.schemaLocation"  : "$projectDir/../androblue.app/schemas".toString(),
+                        "room.schemaLocation"  : "$projectDir/../app/schemas".toString(),
                         "room.incremental"     : "true",
                         "room.expandProjection": "true"]
             }
