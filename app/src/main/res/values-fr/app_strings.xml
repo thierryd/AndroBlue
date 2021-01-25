@@ -1,5 +1,5 @@
 <resources>
-    <string name="login_desc">AndroBlue est une application utilisée pour envoyer des commandes à une Ioniq EV 2020 au Canada\nSVP, saisissez vos accès BlueLink dans les champs ci-bas</string>
+    <string name="login_desc">AndroBlue est une application utilisée pour envoyer des commandes à une Ioniq EV 2020 au Canada.\nSVP, saisissez vos accès BlueLink dans les champs ci-bas.</string>
     <string name="login_email">Courriel</string>
     <string name="login_password">Mot de passe</string>
     <string name="login_pin">PIN</string>
