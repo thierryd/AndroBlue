@@ -37,26 +37,35 @@ class LoginActivityController @Inject constructor(private val loginActivity: Log
                 loginLoadingbg.isVisible = true
                 loginLoading.isVisible = true
 
-                loginActivity.lifecycleScope.launch {
-                    val result = accountRepository.login(loginUsername.text.toString(), loginPassword.text.toString(), loginPin.text.toString())
+                val username = loginUsername.text.toString()
+                if (username == "demo") {
+                    startHomeActivity()
+                } else {
+                    loginActivity.lifecycleScope.launch {
+                        val result = accountRepository.login(username, loginPassword.text.toString(), loginPin.text.toString())
 
-                    withContext(Dispatchers.Main) {
-                        if (result.loggedIn) {
-                            val intent = Intent(loginActivity, HomeActivity::class.java)
-                            loginActivity.startActivity(intent)
-                            loginActivity.finish()
-                        } else {
-                            loginLoadingbg.isVisible = false
-                            loginLoading.isVisible = false
+                        withContext(Dispatchers.Main) {
+                            if (result.loggedIn) {
+                                startHomeActivity()
+                            } else {
+                                loginLoadingbg.isVisible = false
+                                loginLoading.isVisible = false
 
-                            AlertDialog.Builder(loginActivity)
-                                    .setMessage(R.string.login_invalidlogin)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
+                                AlertDialog.Builder(loginActivity)
+                                        .setMessage(R.string.login_invalidlogin)
+                                        .setPositiveButton(android.R.string.ok, null)
+                                        .show()
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun startHomeActivity() {
+        val intent = Intent(loginActivity, HomeActivity::class.java)
+        loginActivity.startActivity(intent)
+        loginActivity.finish()
     }
 }
