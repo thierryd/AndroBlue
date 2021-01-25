@@ -7,16 +7,27 @@ import android.app.Application
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.HOURS
 import javax.inject.Inject
 
 class WorkManagerHelper @Inject constructor(private val application: Application) {
 
     private val logger = Builder().build()
+
+    fun setupCleanableJob() {
+        logger.d("WorkManagerHelper setupCleanableJob ")
+
+        WorkManager.getInstance(application).run {
+            PeriodicWorkRequestBuilder<CleanupWorker>(25, HOURS)
+                    .build()
+        }
+    }
 
     fun enqueueRefresh() {
         logger.d("WorkManagerHelper enqueueRefresh ")

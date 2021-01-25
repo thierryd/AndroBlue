@@ -9,6 +9,7 @@ import androblue.app.di.module.HomeActivityModule
 import androblue.app.di.module.LoginActivityModule
 import androblue.app.os_service.AndroBlueServiceHelper
 import androblue.app.widget.AndroBlueWidget
+import androblue.app.work.CleanupWorker
 import androblue.app.work.RefreshWorker
 import androblue.common.dagger.ScopeApplication
 import androblue.common.log.LoggerInjectionHolder
@@ -44,4 +45,5 @@ interface AndroBlueApplicationComponent : AndroidInjector<AndroBlueApplication> 
     fun inject(androBlueServiceHelper: AndroBlueServiceHelper)
     fun inject(androBlueWidget: AndroBlueWidget)
     fun inject(refreshWorker: RefreshWorker)
+    fun inject(cleanupWorker: CleanupWorker)
 }
