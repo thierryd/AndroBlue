@@ -13,6 +13,7 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 @Suppress("ObjectPropertyName")
@@ -33,14 +34,16 @@ class OkHttpProvider @Inject constructor(private val application: Application,
                 .build()
     }
 
-    fun newOkHttpClientBuilder() = newBuilder()
-
     private fun newBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .also { builder ->
+                .apply {
                     //if (BuildConfig.DEBUG) {
                     //setupProxy(builder, proxyServer)
-                    builder.addInterceptor(HttpLoggingInterceptor { logger.d(it) }.apply {
+                    connectTimeout(60, SECONDS)
+                    callTimeout(60, SECONDS)
+                    writeTimeout(60, SECONDS)
+                    readTimeout(60, SECONDS)
+                    addInterceptor(HttpLoggingInterceptor { logger.d(it) }.apply {
                         level =
                             HttpLoggingInterceptor.Level.BODY
                     })

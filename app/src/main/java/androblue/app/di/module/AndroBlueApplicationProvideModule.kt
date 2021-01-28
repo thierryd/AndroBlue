@@ -1,5 +1,7 @@
 package androblue.app.di.module
 
+import androblue.app.repository.db.VehicleDao
+import androblue.app.repository.db.VehicleDb
 import androblue.common.dagger.ScopeApplication
 import androblue.common.log.db.LoggerDao
 import androblue.common.log.db.LoggerDb
@@ -20,5 +22,14 @@ object AndroBlueApplicationProvideModule {
                 .allowMainThreadQueries()
                 .build()
                 .loggerDao()
+    }
+
+    @Provides
+    @ScopeApplication
+    internal fun provideVehicleDao(application: Application): VehicleDao {
+        return Room
+                .databaseBuilder(application, VehicleDb::class.java, "vehicle_db")
+                .build()
+                .vehicleDao()
     }
 }

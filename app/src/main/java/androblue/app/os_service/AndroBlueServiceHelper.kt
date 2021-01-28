@@ -7,12 +7,12 @@ import androblue.app.helper.NotificationHelper.Companion.FOREGROUND_SERVICE_NOTI
 import androblue.app.repository.AccountRepository
 import androblue.app.repository.VehicleRepository
 import androblue.app.service.PreferenceService
-import androblue.app.widget.WidgetAction.CLIMATE_OFF
-import androblue.app.widget.WidgetAction.CLIMATE_ON
-import androblue.app.widget.WidgetAction.LOCK_OFF
-import androblue.app.widget.WidgetAction.LOCK_ON
-import androblue.app.widget.WidgetAction.TOGGLE_CLIMATE
-import androblue.app.widget.WidgetAction.TOGGLE_LOCK
+import androblue.app.widget.UserAction.CLIMATE_OFF
+import androblue.app.widget.UserAction.CLIMATE_ON
+import androblue.app.widget.UserAction.LOCK_OFF
+import androblue.app.widget.UserAction.LOCK_ON
+import androblue.app.widget.UserAction.TOGGLE_CLIMATE
+import androblue.app.widget.UserAction.TOGGLE_LOCK
 import androblue.common.log.Logger.Builder
 import android.content.Context
 import android.content.Intent
@@ -28,6 +28,7 @@ class AndroBlueServiceHelper @Inject constructor(private val androBlueService: A
     companion object {
         const val STOP_SERVICE_COMMAND = "STOP_SERVICE_COMMAND"
         const val IGNORE_REFRESH_ON_NEXT_APP_WIDGET_UPDATE = "IGNORE_REFRESH_ON_NEXT_APP_WIDGET_UPDATE"
+
         private val _25_SECONDS_IN_MS = TimeUnit.SECONDS.toMillis(25L)
     }
 

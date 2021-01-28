@@ -32,6 +32,7 @@ class AccountNetworkService @Inject constructor(apiProvider: ApiProvider,
             logger.d("AccountNetworkService login response:$response")
             if (response.isSuccessful) {
                 val body = response.body()
+                logger.d("AccountNetworkService login body:$body")
                 if (body?.error == null) {
                     result = LoginResultHolder(response.body(), LoginSuccess)
                 } else {

@@ -16,7 +16,6 @@ private const val PREF_ACCOUNT_PIN = "PREF_ACCOUNT_PIN"
 private const val PREF_MAIN_VEHICLE_ID = "PREF_MAIN_VEHICLE_ID"
 private const val PREF_USER_ACCESS_TOKEN = "PREF_USER_ACCESS_TOKEN"
 private const val PREF_USER_TOKEN_EXPIRE_AT = "PREF_USER_TOKEN_EXPIRE_AT"
-private const val PREF_LAST_UPDATE_TIME = "PREF_LAST_UPDATE_TIME"
 
 @Suppress("LiftReturnOrAssignment")
 @ScopeApplication
@@ -59,15 +58,6 @@ open class PreferenceService @Inject constructor(application: Application) {
     fun mainVehicleId() = prefs.getString(PREF_MAIN_VEHICLE_ID, "") ?: ""
     fun mainVehicleId(mainVehicleId: String) {
         prefs.edit { putString(PREF_MAIN_VEHICLE_ID, mainVehicleId) }
-    }
-
-    /////////////////////////
-    fun lastUpdateTimeInMillis(): ZonedDateTime {
-        return prefs.getLong(PREF_LAST_UPDATE_TIME, 0L).toZonedDateTime(ZoneId.systemDefault())
-    }
-
-    fun setLastUpdateTime(lastUpdate: ZonedDateTime) {
-        prefs.edit { putLong(PREF_LAST_UPDATE_TIME, lastUpdate.toSystemMillis()) }
     }
 }
 

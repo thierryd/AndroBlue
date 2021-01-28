@@ -1,12 +1,18 @@
 package androblue.app.repository
 
 import androblue.app.R
-import androblue.app.data.VehicleStatusDO
 import androblue.app.helper.NotificationHelper
 import androblue.app.os_service.AndroBlueServiceHelper.Companion.IGNORE_REFRESH_ON_NEXT_APP_WIDGET_UPDATE
+import androblue.app.repository.db.VehicleDao
+import androblue.app.repository.model.VehicleModel
+import androblue.app.repository.model.VehicleModelAssembler
+import androblue.app.repository.model.emptyVehicleModel
 import androblue.app.service.PreferenceService
 import androblue.app.service.network.VehicleNetworkService
+import androblue.app.service.toSystemMillis
 import androblue.app.widget.AndroBlueWidget
+import androblue.app.widget.isToday
+import androblue.app.widget.isYesterday
 import androblue.app.work.WorkManagerHelper
 import androblue.common.dagger.ScopeApplication
 import androblue.common.log.Logger.Builder
@@ -15,38 +21,64 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.chrono.IsoChronology
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.DateTimeFormatterBuilder
+import org.threeten.bp.format.SignStyle.EXCEEDS_PAD
+import org.threeten.bp.temporal.ChronoField.HOUR_OF_DAY
+import org.threeten.bp.temporal.ChronoField.MINUTE_OF_HOUR
 import javax.inject.Inject
 import kotlin.random.Random
 
 @Suppress("LiftReturnOrAssignment")
 @ScopeApplication
 class VehicleRepository @Inject constructor(private val context: Context,
+                                            private val vehicleDao: VehicleDao,
+                                            private val vehicleModelAssembler: VehicleModelAssembler,
                                             private val vehicleNetworkService: VehicleNetworkService,
                                             private val preferenceService: PreferenceService,
                                             private val notificationHelper: NotificationHelper,
                                             private val workManagerHelper: WorkManagerHelper) {
 
+    companion object {
+
+        private val HOUR_24_FORMATTER: DateTimeFormatter = (DateTimeFormatterBuilder())
+                .appendValue(HOUR_OF_DAY, 2, 2, EXCEEDS_PAD).appendLiteral(':')
+                .appendValue(MINUTE_OF_HOUR, 2)
+                .toFormatter()
+                .withChronology(IsoChronology.INSTANCE)
+    }
+
+    private val vehicleStatusFlow = MutableStateFlow(StatusDataHolder(RefreshState.NOT_LOADING, emptyVehicleModel()))
     private val logger = Builder().build()
 
-    private val vehicleStatusFlow = MutableStateFlow(StatusDataHolder(RefreshState.NOT_LOADING, LockStatus.UNKNOWN, ClimateStatus.UNKNOWN, 0))
+    init {
+        GlobalScope.launch {
+            vehicleDao.load()?.let {
+                vehicleStatusFlow.value = StatusDataHolder(RefreshState.NOT_LOADING, vehicleModelAssembler.assembleWith(it))
+            }
+        }
+    }
 
     fun vehicleStatus(): Flow<StatusDataHolder> = vehicleStatusFlow.asStateFlow()
 
     @SuppressLint("StringFormatInvalid")
     fun currentChargeStatus(): String {
-        vehicleStatusFlow.value.batteryLevel.let { charge ->
+        vehicleStatusFlow.value.vehicleModel.batteryLevel.let { charge ->
             logger.d("VehicleRepository currentChargeStatus:$charge")
             return context.getString(R.string.widget_chargestatus, charge)
         }
     }
 
-    fun currentLockStatus() = vehicleStatusFlow.value.lockStatus.toNiceName(context)
-
-    fun currentClimateStatus() = vehicleStatusFlow.value.climateStatus.toNiceName(context)
+    fun currentLockStatus() = vehicleStatusFlow.value.vehicleModel.lockStatus.toNiceName(context)
+    fun currentClimateStatus() = vehicleStatusFlow.value.vehicleModel.climateStatus.toNiceName(context)
+    fun lastRefreshTime() = prettyStringOfDateFromNow(vehicleStatusFlow.value.vehicleModel.lastUpdated)
 
     suspend fun validatePin(pin: String): Boolean {
         val status = vehicleNetworkService.vehicleId(pin)
@@ -62,22 +94,17 @@ class VehicleRepository @Inject constructor(private val context: Context,
     suspend fun refreshStatus(): StatusDataHolder {
         logger.d("VehicleRepository refreshStatus START")
 
-        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.LOADING,
-                                                vehicleStatusFlow.value.lockStatus,
-                                                vehicleStatusFlow.value.climateStatus,
-                                                vehicleStatusFlow.value.batteryLevel))
+        var vehicleModel = vehicleStatusFlow.value.vehicleModel
+        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.LOADING, vehicleModel))
 
-        val status = vehicleNetworkService.status(preferenceService.pin())
+        vehicleNetworkService.status(preferenceService.pin())?.result?.status?.let {
+            vehicleModel = vehicleModelAssembler.assembleWith(it)
+            updateDatabase(vehicleModel)
+        }
 
-        val lockStatus = lockStatus(status?.result?.status)
-        val climateStatus = climateStatus(status?.result?.status)
-        val batteryLevel = batteryLevel(status?.result?.status)
+        logger.d("VehicleRepository refreshStatus lockStatus:${vehicleModel.lockStatus} climateStatus:${vehicleModel.climateStatus} batteryLevel:${vehicleModel.batteryLevel}")
 
-        logger.d("VehicleRepository refreshStatus lockStatus:$lockStatus climateStatus:$climateStatus batteryLevel:$batteryLevel")
-
-        preferenceService.setLastUpdateTime(ZonedDateTime.now())
-
-        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.NOT_LOADING, lockStatus, climateStatus, batteryLevel))
+        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.NOT_LOADING, vehicleModel))
 
         val result = vehicleStatusFlow.value
         logger.d("VehicleRepository refreshStatus END result:$result")
@@ -87,14 +114,19 @@ class VehicleRepository @Inject constructor(private val context: Context,
         return result
     }
 
+    private suspend fun updateDatabase(vehicleModel: VehicleModel) {
+        val entity = vehicleModelAssembler.assembleWith(vehicleDao.load()?.uid, vehicleModel)
+        vehicleDao.save(entity)
+    }
+
     suspend fun toggleLock() {
         val result = refreshStatus()
-        executeLockDoors(result.lockStatus == LockStatus.UNLOCKED)
+        executeLockDoors(result.vehicleModel.lockStatus == LockStatus.UNLOCKED)
     }
 
     suspend fun toggleClimate() {
         val result = refreshStatus()
-        executeClimate(result.climateStatus == ClimateStatus.OFF)
+        executeClimate(result.vehicleModel.climateStatus == ClimateStatus.OFF)
     }
 
     suspend fun executeLockDoors(lockDoors: Boolean): Boolean {
@@ -143,7 +175,7 @@ class VehicleRepository @Inject constructor(private val context: Context,
         }
         notificationHelper.updateServiceNotification(title)
 
-        if (vehicleStatusFlow.value.lockStatus == LockStatus.UNLOCKED) {
+        if (vehicleStatusFlow.value.vehicleModel.lockStatus == LockStatus.UNLOCKED) {
             title = context.getString(R.string.notif_error_climatecannotbeturnon_doorunlocked)
             logger.d(title)
             notificationHelper.showAppNotification(title)
@@ -179,6 +211,16 @@ class VehicleRepository @Inject constructor(private val context: Context,
         return result
     }
 
+    private fun prettyStringOfDateFromNow(date: ZonedDateTime): String {
+        val now = ZonedDateTime.now()
+        return when {
+            date.toSystemMillis() == 0L -> context.getString(R.string.widget_updated_never)
+            date.isToday(now) -> context.getString(R.string.widget_updated_today, HOUR_24_FORMATTER.format(date))
+            date.isYesterday(now) -> context.getString(R.string.widget_updated_yesterday, HOUR_24_FORMATTER.format(date))
+            else -> date.toString()
+        }
+    }
+
     private fun updateWidget() {
         val intent = Intent(context, AndroBlueWidget::class.java)
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
@@ -191,37 +233,10 @@ class VehicleRepository @Inject constructor(private val context: Context,
 
         context.sendBroadcast(intent)
     }
-
-    private fun lockStatus(status: VehicleStatusDO?): LockStatus {
-        return when {
-            status == null -> return LockStatus.UNKNOWN
-            status.doorLock == null -> return LockStatus.UNKNOWN
-            status.doorLock == true -> LockStatus.LOCKED
-            else -> LockStatus.UNLOCKED
-        }
-    }
-
-    private fun climateStatus(status: VehicleStatusDO?): ClimateStatus {
-        return when {
-            status == null -> return ClimateStatus.UNKNOWN
-            status.airCtrlOn == null -> return ClimateStatus.UNKNOWN
-            status.airCtrlOn == true -> ClimateStatus.ON
-            else -> ClimateStatus.OFF
-        }
-    }
-
-    private fun batteryLevel(status: VehicleStatusDO?): Int {
-        return when (status) {
-            null -> 0
-            else -> status.evStatus?.batteryStatus ?: 0
-        }
-    }
 }
 
 data class StatusDataHolder(val refreshState: RefreshState,
-                            val lockStatus: LockStatus,
-                            val climateStatus: ClimateStatus,
-                            val batteryLevel: Int)
+                            val vehicleModel: VehicleModel)
 
 enum class LockStatus {
     UNKNOWN, LOCKED, UNLOCKED;

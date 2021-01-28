@@ -1,5 +1,6 @@
 package androblue.app.home
 
+import androblue.app.BuildConfig
 import androblue.app.HomeActivity
 import androblue.app.R
 import androblue.app.advanced.AdvancedActivity
@@ -9,10 +10,10 @@ import androblue.app.repository.AccountRepository
 import androblue.app.repository.RefreshState
 import androblue.app.repository.VehicleRepository
 import androblue.app.service.PreferenceService
-import androblue.app.widget.WidgetAction.CLIMATE_OFF
-import androblue.app.widget.WidgetAction.CLIMATE_ON
-import androblue.app.widget.WidgetAction.LOCK_OFF
-import androblue.app.widget.WidgetAction.LOCK_ON
+import androblue.app.widget.UserAction.CLIMATE_OFF
+import androblue.app.widget.UserAction.CLIMATE_ON
+import androblue.app.widget.UserAction.LOCK_OFF
+import androblue.app.widget.UserAction.LOCK_ON
 import androblue.common.dagger.ScopeActivity
 import androblue.common.ext.appVersionName
 import androblue.common.ext.blockingOnClickListener
@@ -45,9 +46,10 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
         observeStates()
         setClickListeners()
 
-        activity.binding.homeVersion.text = "v${activity.appVersionName()}"
+        activity.binding.homeVersion.text = "v${activity.appVersionName()} - ${BuildConfig.BUILD_TYPE}"
     }
 
+    @SuppressLint("SetTextI18n")
     private fun observeStates() {
         activity.lifecycleScope.launch(Dispatchers.Main) {
             accountRepository.loggedInStatusObs().collect {
@@ -60,9 +62,10 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
         activity.lifecycleScope.launch(Dispatchers.Main) {
             vehicleRepository.vehicleStatus().collect { statusDataHolder ->
                 activity.binding.apply {
-                    homeLockstatus.text = activity.getString(R.string.home_lockstatus, statusDataHolder.lockStatus.toNiceName(activity))
-                    homeClimatestatus.text = activity.getString(R.string.home_climatestatus, statusDataHolder.climateStatus.toNiceName(activity))
-                    homeBatterystatus.text = activity.getString(R.string.home_currentcharge, statusDataHolder.batteryLevel)
+                    homeStatustimestamp.text = "${activity.getString(R.string.widget_lastupdated)}: ${vehicleRepository.lastRefreshTime()}"
+                    homeLockstatus.text = activity.getString(R.string.home_lockstatus, statusDataHolder.vehicleModel.lockStatus.toNiceName(activity))
+                    homeClimatestatus.text = activity.getString(R.string.home_climatestatus, statusDataHolder.vehicleModel.climateStatus.toNiceName(activity))
+                    homeBatterystatus.text = activity.getString(R.string.home_currentcharge, statusDataHolder.vehicleModel.batteryLevel)
                     homeStatusprogress.isVisible = statusDataHolder.refreshState == RefreshState.LOADING
                 }
             }
