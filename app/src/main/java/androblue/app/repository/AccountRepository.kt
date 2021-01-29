@@ -1,5 +1,7 @@
 package androblue.app.repository
 
+import androblue.app.repository.db.VehicleDao
+import androblue.app.repository.model.VehicleModelAssembler
 import androblue.app.service.PreferenceService
 import androblue.app.service.network.AccountNetworkService
 import androblue.app.service.network.LoginResult
@@ -18,6 +20,8 @@ import javax.inject.Inject
 
 @ScopeApplication
 class AccountRepository @Inject constructor(private val preferenceService: PreferenceService,
+                                            private val vehicleDao: VehicleDao,
+                                            private val vehicleModelAssembler: VehicleModelAssembler,
                                             private val timeService: TimeService,
                                             private val accountNetworkService: AccountNetworkService,
                                             private val vehicleRepository: VehicleRepository) {
@@ -83,6 +87,8 @@ class AccountRepository @Inject constructor(private val preferenceService: Prefe
 
     suspend fun logout() {
         logger.d("AccountRepository logout ")
+
+        vehicleDao.clear()
 
         preferenceService.username("")
         preferenceService.password("")

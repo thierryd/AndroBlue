@@ -16,6 +16,20 @@ interface VehicleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(entity: VehicleEntity)
+
+    suspend fun clear() {
+        loadAll().forEach {
+            save(it.clearData())
+        }
+
+        clearDatabase()
+    }
+
+    @Query("SELECT * FROM VehicleEntity  limit 1")
+    suspend fun loadAll(): List<VehicleEntity>
+
+    @Query("DELETE FROM VehicleEntity")
+    suspend fun clearDatabase()
 }
 
 class LockStatusConverter {

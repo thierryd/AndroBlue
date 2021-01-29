@@ -76,6 +76,7 @@ class VehicleRepository @Inject constructor(private val context: Context,
         }
     }
 
+    fun currentRefreshState() = vehicleStatusFlow.value.refreshState
     fun currentLockStatus() = vehicleStatusFlow.value.vehicleModel.lockStatus.toNiceName(context)
     fun currentClimateStatus() = vehicleStatusFlow.value.vehicleModel.climateStatus.toNiceName(context)
     fun lastRefreshTime() = prettyStringOfDateFromNow(vehicleStatusFlow.value.vehicleModel.lastUpdated)
@@ -91,8 +92,12 @@ class VehicleRepository @Inject constructor(private val context: Context,
         return vehicleId != null
     }
 
-    suspend fun refreshStatus(): StatusDataHolder {
-        logger.d("VehicleRepository refreshStatus START")
+    suspend fun refreshStatus() {
+        val currentRefreshState = currentRefreshState()
+        logger.d("VehicleRepository refreshStatus START currentRefreshState:$currentRefreshState")
+        if (currentRefreshState == RefreshState.LOADING) {
+            return
+        }
 
         var vehicleModel = vehicleStatusFlow.value.vehicleModel
         vehicleStatusFlow.emit(StatusDataHolder(RefreshState.LOADING, vehicleModel))
@@ -110,8 +115,6 @@ class VehicleRepository @Inject constructor(private val context: Context,
         logger.d("VehicleRepository refreshStatus END result:$result")
 
         updateWidget()
-
-        return result
     }
 
     private suspend fun updateDatabase(vehicleModel: VehicleModel) {
@@ -120,13 +123,13 @@ class VehicleRepository @Inject constructor(private val context: Context,
     }
 
     suspend fun toggleLock() {
-        val result = refreshStatus()
-        executeLockDoors(result.vehicleModel.lockStatus == LockStatus.UNLOCKED)
+        refreshStatus()
+        executeLockDoors(vehicleStatusFlow.value.vehicleModel.lockStatus == LockStatus.UNLOCKED)
     }
 
     suspend fun toggleClimate() {
-        val result = refreshStatus()
-        executeClimate(result.vehicleModel.climateStatus == ClimateStatus.OFF)
+        refreshStatus()
+        executeClimate(vehicleStatusFlow.value.vehicleModel.climateStatus == ClimateStatus.OFF)
     }
 
     suspend fun executeLockDoors(lockDoors: Boolean): Boolean {

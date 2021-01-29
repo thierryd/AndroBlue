@@ -18,6 +18,7 @@ import androblue.common.dagger.ScopeActivity
 import androblue.common.ext.appVersionName
 import androblue.common.ext.blockingOnClickListener
 import androblue.common.ext.onCreateRuns
+import androblue.common.ext.onResumeRuns
 import androblue.common.log.Logger.Builder
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -39,6 +40,7 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
 
     init {
         activity.onCreateRuns(::onActivityCreated)
+        activity.onResumeRuns(::onActivityResumed)
     }
 
     @SuppressLint("SetTextI18n")
@@ -47,6 +49,12 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
         setClickListeners()
 
         activity.binding.homeVersion.text = "v${activity.appVersionName()} - ${BuildConfig.BUILD_TYPE}"
+    }
+
+    private fun onActivityResumed() {
+        activity.lifecycleScope.launch {
+            vehicleRepository.refreshStatus()
+        }
     }
 
     @SuppressLint("SetTextI18n")

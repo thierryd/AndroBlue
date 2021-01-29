@@ -1,5 +1,6 @@
 package androblue.app.service.okhttp
 
+import androblue.app.BuildConfig
 import androblue.common.log.Logger
 import android.app.Application
 import android.content.Context
@@ -34,11 +35,13 @@ class OkHttpProvider @Inject constructor(private val application: Application,
                 .build()
     }
 
+    @Suppress("ControlFlowWithEmptyBody")
     private fun newBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
                 .apply {
-                    //if (BuildConfig.DEBUG) {
-                    //setupProxy(builder, proxyServer)
+                    if (BuildConfig.DEBUG) {
+                        //setupProxy(this, "192.168.86.28")
+                    }
                     connectTimeout(60, SECONDS)
                     callTimeout(60, SECONDS)
                     writeTimeout(60, SECONDS)
@@ -47,7 +50,6 @@ class OkHttpProvider @Inject constructor(private val application: Application,
                         level =
                             HttpLoggingInterceptor.Level.BODY
                     })
-                    //}
                 }
     }
 

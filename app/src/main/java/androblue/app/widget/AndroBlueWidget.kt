@@ -61,7 +61,10 @@ class AndroBlueWidget : AppWidgetProvider() {
         logger.d("AndroBlueWidget onReceive intent.action:${intent.action} intent:$intent extra:${intent.extras?.keySet()?.map { it.toString() }}")
 
         if (intent.action == START_APP) {
-            val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
             context.startActivity(launchIntent)
         } else if (intent.action in UserAction.names() || intent.action == "android.appwidget.action.APPWIDGET_UPDATE") {
             val serviceIntent = Intent(context, AndroBlueService::class.java).apply {

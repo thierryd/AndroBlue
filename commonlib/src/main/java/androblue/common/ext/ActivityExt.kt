@@ -11,3 +11,11 @@ fun AppCompatActivity.onCreateRuns(block: () -> Unit) {
         }
     })
 }
+
+fun AppCompatActivity.onResumeRuns(block: () -> Unit) {
+    lifecycle.addObserver(object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+            block()
+        }
+    })
+}
