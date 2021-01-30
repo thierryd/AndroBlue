@@ -52,7 +52,7 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
     }
 
     private fun onActivityResumed() {
-        activity.lifecycleScope.launch {
+        activity.lifecycleScope.launch(Dispatchers.IO) {
             vehicleRepository.refreshStatus()
         }
     }

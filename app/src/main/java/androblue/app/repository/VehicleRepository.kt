@@ -96,24 +96,23 @@ class VehicleRepository @Inject constructor(private val context: Context,
         val currentRefreshState = currentRefreshState()
         logger.d("VehicleRepository refreshStatus START currentRefreshState:$currentRefreshState")
         if (currentRefreshState == RefreshState.LOADING) {
-            return
+            logger.d("VehicleRepository refreshStatus already refreshing. Ignoring refresh request")
+        } else {
+            var vehicleModel = vehicleStatusFlow.value.vehicleModel
+            vehicleStatusFlow.emit(StatusDataHolder(RefreshState.LOADING, vehicleModel))
+
+            vehicleNetworkService.status(preferenceService.pin())?.result?.status?.let {
+                vehicleModel = vehicleModelAssembler.assembleWith(it)
+                updateDatabase(vehicleModel)
+            }
+
+            logger.d("VehicleRepository refreshStatus lockStatus:${vehicleModel.lockStatus} climateStatus:${vehicleModel.climateStatus} batteryLevel:${vehicleModel.batteryLevel}")
+
+            vehicleStatusFlow.emit(StatusDataHolder(RefreshState.NOT_LOADING, vehicleModel))
+
+            val result = vehicleStatusFlow.value
+            logger.d("VehicleRepository refreshStatus END result:$result")
         }
-
-        var vehicleModel = vehicleStatusFlow.value.vehicleModel
-        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.LOADING, vehicleModel))
-
-        vehicleNetworkService.status(preferenceService.pin())?.result?.status?.let {
-            vehicleModel = vehicleModelAssembler.assembleWith(it)
-            updateDatabase(vehicleModel)
-        }
-
-        logger.d("VehicleRepository refreshStatus lockStatus:${vehicleModel.lockStatus} climateStatus:${vehicleModel.climateStatus} batteryLevel:${vehicleModel.batteryLevel}")
-
-        vehicleStatusFlow.emit(StatusDataHolder(RefreshState.NOT_LOADING, vehicleModel))
-
-        val result = vehicleStatusFlow.value
-        logger.d("VehicleRepository refreshStatus END result:$result")
-
         updateWidget()
     }
 

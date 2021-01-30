@@ -47,8 +47,7 @@ class OkHttpProvider @Inject constructor(private val application: Application,
                     writeTimeout(60, SECONDS)
                     readTimeout(60, SECONDS)
                     addInterceptor(HttpLoggingInterceptor { logger.d(it) }.apply {
-                        level =
-                            HttpLoggingInterceptor.Level.BODY
+                        //level = HttpLoggingInterceptor.Level.BODY
                     })
                 }
     }

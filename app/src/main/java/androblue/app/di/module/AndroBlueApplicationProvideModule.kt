@@ -19,6 +19,7 @@ object AndroBlueApplicationProvideModule {
     internal fun provideLoggerDao(application: Application): LoggerDao {
         return Room
                 .databaseBuilder(application, LoggerDb::class.java, "log_db")
+                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()
                 .loggerDao()

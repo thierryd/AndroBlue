@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [LoggerItemEntity::class], version = 1)
+@Database(entities = [LoggerItemEntity::class], version = 2)
 @TypeConverters(DateConverter::class, CategoryConverter::class)
 abstract class LoggerDb : RoomDatabase() {
 
