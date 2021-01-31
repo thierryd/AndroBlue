@@ -11,6 +11,7 @@
     <string name="home_status">État du véhicule</string>
     <string name="home_refresh">Rafraîchir</string>
     <string name="home_advanced">Avancé</string>
+    <string name="home_temperaturelabel">Température du climat (Celcius):</string>
     <string name="home_climateoff">Désactivation du climat</string>
     <string name="home_climateon">Activation du climat</string>
     <string name="home_lock">Verrouiller</string>

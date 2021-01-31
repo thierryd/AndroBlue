@@ -1,6 +1,8 @@
 package androblue.app.service
 
+import androblue.app.home.HomeActivityController.Companion.VEHICLE_CLIMATE_DEFAULT_TEMPERATURE
 import androblue.common.dagger.ScopeApplication
+import androblue.common.preference.FlowPreferences
 import android.app.Application
 import android.content.Context
 import androidx.annotation.VisibleForTesting
@@ -16,6 +18,7 @@ private const val PREF_ACCOUNT_PIN = "PREF_ACCOUNT_PIN"
 private const val PREF_MAIN_VEHICLE_ID = "PREF_MAIN_VEHICLE_ID"
 private const val PREF_USER_ACCESS_TOKEN = "PREF_USER_ACCESS_TOKEN"
 private const val PREF_USER_TOKEN_EXPIRE_AT = "PREF_USER_TOKEN_EXPIRE_AT"
+private const val PREF_CLIMATE_TEMP = "PREF_CLIMATE_TEMP"
 
 @Suppress("LiftReturnOrAssignment")
 @ScopeApplication
@@ -26,6 +29,7 @@ open class PreferenceService @Inject constructor(application: Application) {
     }
 
     private val prefs = application.getSharedPreferences(PREF_FILENAME, Context.MODE_PRIVATE)
+    private val flowPreferences = FlowPreferences.create(prefs)
 
     fun userAccessToken(): String = prefs.getString(PREF_USER_ACCESS_TOKEN, null) ?: ""
 
@@ -58,6 +62,13 @@ open class PreferenceService @Inject constructor(application: Application) {
     fun mainVehicleId() = prefs.getString(PREF_MAIN_VEHICLE_ID, "") ?: ""
     fun mainVehicleId(mainVehicleId: String) {
         prefs.edit { putString(PREF_MAIN_VEHICLE_ID, mainVehicleId) }
+    }
+
+    /////////////////////////
+    fun climateTemperature() = prefs.getFloat(PREF_CLIMATE_TEMP, VEHICLE_CLIMATE_DEFAULT_TEMPERATURE)
+    fun climateTemperatureFlow() = flowPreferences.getFloatFlow(PREF_CLIMATE_TEMP, VEHICLE_CLIMATE_DEFAULT_TEMPERATURE)
+    fun climateTemperature(temperature: Float) {
+        prefs.edit { putFloat(PREF_CLIMATE_TEMP, temperature) }
     }
 }
 

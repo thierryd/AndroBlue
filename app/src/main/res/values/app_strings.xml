@@ -31,6 +31,7 @@
 
     <string name="home_loggininas">Logged in as: %1$s</string>
     <string name="home_lockstatus">Lock status: %1$s</string>
+    <string name="home_temperaturelabel">Climate Temperature (Celcius):</string>
     <string name="home_climatestatus">Climate status: %1$s</string>
     <string name="home_currentcharge">Current charge: %1$d</string>
 

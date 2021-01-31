@@ -10,6 +10,7 @@ import androblue.app.repository.model.emptyVehicleModel
 import androblue.app.service.PreferenceService
 import androblue.app.service.network.VehicleNetworkService
 import androblue.app.service.toSystemMillis
+import androblue.app.utils.TemperatureConverter
 import androblue.app.widget.AndroBlueWidget
 import androblue.app.widget.isToday
 import androblue.app.widget.isYesterday
@@ -44,6 +45,7 @@ class VehicleRepository @Inject constructor(private val context: Context,
                                             private val vehicleNetworkService: VehicleNetworkService,
                                             private val preferenceService: PreferenceService,
                                             private val notificationHelper: NotificationHelper,
+                                            private val temperatureConverter: TemperatureConverter,
                                             private val workManagerHelper: WorkManagerHelper) {
 
     companion object {
@@ -186,7 +188,7 @@ class VehicleRepository @Inject constructor(private val context: Context,
         }
 
         val result = if (climateOn) {
-            vehicleNetworkService.climateOn()
+            vehicleNetworkService.climateOn(temperatureConverter.convert(preferenceService.climateTemperature()))
         } else {
             vehicleNetworkService.climateOff()
         }
@@ -236,6 +238,7 @@ class VehicleRepository @Inject constructor(private val context: Context,
         context.sendBroadcast(intent)
     }
 }
+
 
 data class StatusDataHolder(val refreshState: RefreshState,
                             val vehicleModel: VehicleModel)

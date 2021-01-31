@@ -96,14 +96,14 @@ class VehicleNetworkService @Inject constructor(apiProvider: ApiProvider,
         return result
     }
 
-    suspend fun climateOn(): Boolean {
+    suspend fun climateOn(temperature: String): Boolean {
         logger.d("VehicleNetworkService climateOn START")
 
         var result = false
         try {
             accountNetworkService.getPreAuthentication()?.result?.pAuth?.let { pAuth ->
                 val response = vehicleApi.climateOn(preferenceService.mainVehicleId(), pAuth,
-                                                    ClimateOnRequestDO(hvacInfo = androblue.app.data.climateOn(), pin = preferenceService.pin()))
+                                                    ClimateOnRequestDO(hvacInfo = androblue.app.data.climateOn(temperature), pin = preferenceService.pin()))
 
                 logger.d("VehicleNetworkService climateOn response:$response")
                 result = response.isSuccessful && response.body()?.error == null
