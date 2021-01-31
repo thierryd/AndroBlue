@@ -34,6 +34,7 @@ import com.tiper.MaterialSpinner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ScopeActivity
@@ -154,12 +155,14 @@ class HomeActivityController @Inject constructor(private val activity: HomeActiv
     }
 
     private fun logout() {
-        activity.lifecycleScope.launch(Dispatchers.Main) {
+        activity.lifecycleScope.launch(Dispatchers.IO) {
             accountRepository.logout()
 
-            val intent = Intent(activity, LoginActivity::class.java)
-            activity.startActivity(intent)
-            activity.finish()
+            withContext(Dispatchers.Main) {
+                val intent = Intent(activity, LoginActivity::class.java)
+                activity.startActivity(intent)
+                activity.finish()
+            }
         }
     }
 
