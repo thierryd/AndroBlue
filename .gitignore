@@ -102,3 +102,6 @@ TODO.md
 /commonlib/build/
 /app/build/
 /app/src/debug/assets/developer.properties
+/fastlane/*.json
+/fastlane/Appfile
+/fastlane/metadata/android/

@@ -1,0 +1,53 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  ###################################################################################
+  desc "Deploy a new version to the Google Play"
+  ###################################################################################
+
+  lane :deploy do
+    ensure_git_status_clean
+    gradle(task: "clean")
+    validate_string
+    gradle(task: "clean lint bundleRelease")
+
+    aabPath = 'app/build/outputs/bundle/release/app-release.aab'
+    supply(
+           aab: aabPath,
+           skip_upload_changelogs: true,
+           skip_upload_apk: true,
+           skip_upload_images: true,
+           skip_upload_screenshots: true)
+  end
+
+  ###################################################################################
+  desc "Find any file that match certain strings. This is to make sure username or password are not commited to git"
+  ###################################################################################
+  private_lane :validate_string do
+      invalid_strings = "#{ENV["INVALID_STRINGS"]}"
+      shell_cmd = "grep --exclude-dir=fastlane --exclude-dir=.git --exclude-dir=.idea --exclude-dir=.gradle --ignore-case -qr -E \"#{invalid_strings}\" ../.; echo $?"
+      puts "Executing: '#{shell_cmd}'"
+
+      result = sh(shell_cmd, log:false)
+      puts "Result:'#{result}'"
+      if (result == "0\n")
+          UI.user_error!("Invalid text found")
+      end
+    end
+end
