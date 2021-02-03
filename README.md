@@ -5,9 +5,9 @@ AndroBlue is an Android application used to send command to the Hyundai
  Ioniq EV 2020 from Canada. It is available on the Play Store at:
  https://play.google.com/store/apps/details?id=androblue.app
 
-![Alt text](/app/assets/screemshot_1.webp?raw=true "Screenshot 1")
-![Alt text](/app/assets/screemshot_2.webp?raw=true "Screenshot 2")
-![Alt text](/app/assets/screemshot_3.webp?raw=true "Screenshot 3")
+![Alt text](app/assets/screenshot_1.webp?raw=true "Screenshot 1")
+![Alt text](app/assets/screenshot_2.webp?raw=true "Screenshot 2")
+![Alt text](app/assets/screenshot_3.webp?raw=true "Screenshot 3")
 
 Thanks https://github.com/Hacksore/bluelinky for the inspiration!
 
