@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 class HomeActivity : LoggingActivity() {
 
+    @Suppress("unused")
     @Inject lateinit var mainActivityController: HomeActivityController
 
     lateinit var binding: HomeActivityBinding
