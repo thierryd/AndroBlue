@@ -10,6 +10,7 @@ import androblue.common.dagger.ScopeApplication
 import androblue.common.ext.toSystemMillis
 import androblue.common.log.Logger.Builder
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,11 +34,7 @@ class AccountRepository @Inject constructor(private val preferenceService: Prefe
         if (preferenceService.userAccessToken().isNotEmpty()) {
             val tokenExpireAt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(preferenceService.userAccessTokenExpireAt()), timeService.defaultZoneId())
             if (tokenExpireAt.isBefore(timeService.now())) {
-                GlobalScope.launch {
-                    logger.d("AccountRepository token has expired. Re-loging")
-                    preferenceService.userAccessToken("") //clear the access token
-                    login(preferenceService.username(), preferenceService.password(), preferenceService.pin())
-                }
+                onRefreshTokenExpired()
             } else {
                 logger.d("AccountRepository token is still valid. Now:${timeService.now()} tokenExpireAt:$tokenExpireAt")
                 loggedInStatusFlow.tryEmit(AccountStatus(RefreshState.NOT_LOADING, true))
@@ -55,7 +52,7 @@ class AccountRepository @Inject constructor(private val preferenceService: Prefe
 
         var loginValid = false
         if (result.loginResult is LoginResult.LoginSuccess) {
-            logger.d("AccountRepository login success - validating pin:$pin")
+            logger.d("AccountRepository login success - validating pin")
 
             //We need to set the user access token info since it is used by validatePin()
             val expireAt = timeService.now().plusSeconds(result.loginDO?.result?.expireIn ?: 0L)
@@ -73,14 +70,9 @@ class AccountRepository @Inject constructor(private val preferenceService: Prefe
             }
         }
 
-        if (loginValid) {
-            loggedInStatusFlow.emit(AccountStatus(RefreshState.NOT_LOADING, true))
-        } else {
-            logger.d("AccountRepository login failure")
-            logout()
-        }
+        loggedInStatusFlow.emit(AccountStatus(RefreshState.NOT_LOADING, loginValid))
 
-        logger.d("AccountRepository login END current status:${loggedInStatus()}")
+        logger.d("AccountRepository login END loginValid:${loginValid} current status:${loggedInStatus()}")
 
         return loggedInStatus()
     }
@@ -99,6 +91,22 @@ class AccountRepository @Inject constructor(private val preferenceService: Prefe
         preferenceService.userAccessTokenExpireAt(0L)
 
         loggedInStatusFlow.emit(AccountStatus(RefreshState.NOT_LOADING, false))
+    }
+
+    private fun onRefreshTokenExpired() {
+        GlobalScope.launch {
+            logger.d("AccountRepository token has expired. Re-loging")
+            loggedInStatusFlow.emit(AccountStatus(RefreshState.LOADING, false))
+            preferenceService.userAccessToken("") //clear the access token
+
+            do {
+                val result = login(preferenceService.username(), preferenceService.password(), preferenceService.pin())
+                logger.d("AccountRepository onRefreshTokenExpired ")
+                if (!result.loggedIn) {
+                    delay(5000L)
+                }
+            } while (!loggedInStatus().loggedIn)
+        }
     }
 }
 
