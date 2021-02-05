@@ -59,6 +59,7 @@ dependencies {
     api "androidx.room:room-ktx:2.2.6"
     kapt "androidx.room:room-compiler:2.2.6"
 
+    implementation "androidx.security:security-crypto:1.0.0-rc04"
 
     //////////////////////////////////////////////////
     //UNIT TESTS

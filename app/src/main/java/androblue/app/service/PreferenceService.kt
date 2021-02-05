@@ -7,6 +7,8 @@ import android.app.Application
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.edit
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
@@ -19,6 +21,7 @@ private const val PREF_MAIN_VEHICLE_ID = "PREF_MAIN_VEHICLE_ID"
 private const val PREF_USER_ACCESS_TOKEN = "PREF_USER_ACCESS_TOKEN"
 private const val PREF_USER_TOKEN_EXPIRE_AT = "PREF_USER_TOKEN_EXPIRE_AT"
 private const val PREF_CLIMATE_TEMP = "PREF_CLIMATE_TEMP"
+private const val PREF_SECURED_KEYS_MIGRATION_DONE = "PREF_SECURED_KEYS_MIGRATION_DONE"
 
 @Suppress("LiftReturnOrAssignment")
 @ScopeApplication
@@ -26,10 +29,31 @@ open class PreferenceService @Inject constructor(application: Application) {
 
     companion object {
         @VisibleForTesting const val PREF_FILENAME = "androblue_prefs"
+        @VisibleForTesting const val SECURED_PREF_FILENAME = "androblue_securedprefs"
     }
 
     private val prefs = application.getSharedPreferences(PREF_FILENAME, Context.MODE_PRIVATE)
     private val flowPreferences = FlowPreferences.create(prefs)
+
+    private var masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+
+    private val securedPref = EncryptedSharedPreferences.create(SECURED_PREF_FILENAME, masterKeyAlias, application, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                                                                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
+
+    init {
+        if (!prefs.getBoolean(PREF_SECURED_KEYS_MIGRATION_DONE, false)) {
+            securedPref.edit { putString(PREF_ACCOUNT_USERNAME, prefs.getString(PREF_ACCOUNT_USERNAME, "")) }
+            securedPref.edit { putString(PREF_ACCOUNT_PASSWORD, prefs.getString(PREF_ACCOUNT_PASSWORD, "")) }
+            securedPref.edit { putString(PREF_ACCOUNT_PIN, prefs.getString(PREF_ACCOUNT_PIN, "")) }
+            securedPref.edit { putString(PREF_MAIN_VEHICLE_ID, prefs.getString(PREF_ACCOUNT_PIN, "")) }
+
+            prefs.edit { remove(PREF_ACCOUNT_USERNAME) }
+            prefs.edit { remove(PREF_ACCOUNT_PASSWORD) }
+            prefs.edit { remove(PREF_ACCOUNT_PIN) }
+            prefs.edit { remove(PREF_ACCOUNT_PIN) }
+            prefs.edit { putBoolean(PREF_SECURED_KEYS_MIGRATION_DONE, true) }
+        }
+    }
 
     fun userAccessToken(): String = prefs.getString(PREF_USER_ACCESS_TOKEN, null) ?: ""
 
@@ -44,24 +68,24 @@ open class PreferenceService @Inject constructor(application: Application) {
     fun userAccessTokenExpireAt() = prefs.getLong(PREF_USER_TOKEN_EXPIRE_AT, -1L)
 
     /////////////////////////
-    fun username() = prefs.getString(PREF_ACCOUNT_USERNAME, "") ?: ""
+    fun username() = securedPref.getString(PREF_ACCOUNT_USERNAME, "") ?: ""
     fun username(username: String) {
-        prefs.edit { putString(PREF_ACCOUNT_USERNAME, username) }
+        securedPref.edit { putString(PREF_ACCOUNT_USERNAME, username) }
     }
 
-    fun password() = prefs.getString(PREF_ACCOUNT_PASSWORD, "") ?: ""
+    fun password() = securedPref.getString(PREF_ACCOUNT_PASSWORD, "") ?: ""
     fun password(password: String) {
-        prefs.edit { putString(PREF_ACCOUNT_PASSWORD, password) }
+        securedPref.edit { putString(PREF_ACCOUNT_PASSWORD, password) }
     }
 
-    fun pin() = prefs.getString(PREF_ACCOUNT_PIN, "") ?: ""
+    fun pin() = securedPref.getString(PREF_ACCOUNT_PIN, "") ?: ""
     fun pin(pin: String) {
-        prefs.edit { putString(PREF_ACCOUNT_PIN, pin) }
+        securedPref.edit { putString(PREF_ACCOUNT_PIN, pin) }
     }
 
-    fun mainVehicleId() = prefs.getString(PREF_MAIN_VEHICLE_ID, "") ?: ""
+    fun mainVehicleId() = securedPref.getString(PREF_MAIN_VEHICLE_ID, "") ?: ""
     fun mainVehicleId(mainVehicleId: String) {
-        prefs.edit { putString(PREF_MAIN_VEHICLE_ID, mainVehicleId) }
+        securedPref.edit { putString(PREF_MAIN_VEHICLE_ID, mainVehicleId) }
     }
 
     /////////////////////////
